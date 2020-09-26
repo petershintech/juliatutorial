@@ -41,7 +41,7 @@ If you need to store a limited set of types in the array, you can use the `Union
 
 `a = Int64[]` is just a shorthand for `a = Array{Int64,1}()` \(e.g. `a = Any[1,1.5,2.5]` is equivalent to `a = Array{Any,1}([1,1.5,2.5])`\). Attention that `a = Array{Int64,1}` \(without the round brackets\) doesn't create an Array at all, but just assign the "DataType" `Array{Int64,1}` to `a`. You can also declare an array of size _n_ \(with garbage content\) with `a=Array{T,1}(undef,n)`.
 
-Square brackets are used to access the elements of an array \(e.g. `a[1]`\). The slice syntax `[from:step:to]` is generally supported and in several contexts will return a \(fast\) iterator rather than a list \(you can use the keyword `end`, but not `begin`\). To then transform the iterator in a list use `collect(myiterator)`. You can initialise an array with a mix of values and ranges with either `y=[2015; 2025:2030; 2100]` \(note the semicolon!\) or `y=vcat(2015, 2025:2030, 2100)`.
+Square brackets are used to access the elements of an array \(e.g. `a[1]`\). The slice syntax `[from:step:to]` is generally supported and in several contexts will return a \(fast\) iterator rather than a list \(you can use the keyword `end`, but not `begin`\). To transform the iterator into a list, use `collect(myiterator)`. You can initialise an array with a mix of values and ranges with either `y=[2015; 2025:2030; 2100]` \(note the semicolon!\) or `y=vcat(2015, 2025:2030, 2100)`.
 
 The following methods are useful while working with arrays:
 
@@ -52,7 +52,7 @@ The following methods are useful while working with arrays:
 * Removing an element at the beginning \(left\): `popfirst!(a)`
 * Remove an element at an arbitrary position:  `deleteat!(a, pos)`
 * Add an element \(b\) at the beginning \(left\):  `pushfirst!(a,b)` \(no, `appendfirst!` doesn't exists!\)
-* Sorting: `sort!(a)` or `sort(a)` \(depending on whether we want to modify or not the original array\)
+* Sorting: `sort!(a)` or `sort(a)` \(the first modifies the original array but the latter does not)
 * Reversing an arry: `a[end:-1:1]`
 * Checking for existence: `in(1, a)`
 * Getting the length: `length(a)`
@@ -106,7 +106,7 @@ a = [[1,2,3] [4,5,6]]
 mask = [[true,true,false] [false,true,false]]
 ```
 
-`a[mask]` returns an 1-D array with 1, 2 and 5. Note that boolean selection results always in a flatted array, even if delete a whole row or a whole column of the original data. It is up to the programmer to then reshape the data accordingly.
+`a[mask]` returns an 1-D array with 1, 2 and 5. Note that boolean selection results always in a flatted array, even in the case the entire row or column of the original data is deleted. It is up to the programmer to then reshape the data accordingly.
 
 Note: for row vectors, both `a[2]` or `a[1,2]` returns the second element.
 
@@ -200,7 +200,7 @@ In order to avoid unnecessarily copying large amounts of data, Julia by default 
 **Equal sign \(a=b\)**
 
 * "simple" types \(e.g. `Float64, Int64,` but also `String`\) are deep copied
-* containers of simple types \(or other containers\) are shadow copied \(their internal is only referenced, not copied\)
+* containers of simple types \(or other containers\) are shallow copied \(their internal is only referenced, not copied\)
 
 **copy\(x\)**
 
